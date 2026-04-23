@@ -144,26 +144,47 @@ fig.update_layout(title="Model Performance (MAE)", yaxis_title="Error")
 st.plotly_chart(fig, use_container_width=True)
 
 # ---------------- INTERACTIVE STOCK CHART ----------------
+import plotly.graph_objects as go
+
 st.subheader("📈 Interactive Stock Chart")
 
 fig2 = go.Figure()
 
+# Close Price (bright cyan)
 fig2.add_trace(go.Scatter(
-    x=data["Date"], y=data["Close"],
-    mode='lines', name='Close Price'
+    x=data["Date"], 
+    y=data["Close"],
+    mode='lines',
+    name='Close Price',
+    line=dict(color='cyan', width=2)
 ))
 
+# MA10 (yellow)
 fig2.add_trace(go.Scatter(
-    x=data["Date"], y=data["MA10"],
-    mode='lines', name='MA10'
+    x=data["Date"], 
+    y=data["MA10"],
+    mode='lines',
+    name='MA10',
+    line=dict(color='yellow', width=2)
 ))
 
+# MA50 (red)
 fig2.add_trace(go.Scatter(
-    x=data["Date"], y=data["MA50"],
-    mode='lines', name='MA50'
+    x=data["Date"], 
+    y=data["MA50"],
+    mode='lines',
+    name='MA50',
+    line=dict(color='red', width=2)
 ))
 
-fig2.update_layout(title=f"{stock} Price Trend")
+# 🔥 Important: Dark theme layout
+fig2.update_layout(
+    template="plotly_dark",
+    title=f"{stock} Price Trend",
+    plot_bgcolor='black',
+    paper_bgcolor='black',
+    font=dict(color='white')
+)
 
 st.plotly_chart(fig2, use_container_width=True)
 
