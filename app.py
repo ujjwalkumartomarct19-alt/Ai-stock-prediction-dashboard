@@ -98,12 +98,15 @@ selected_model = st.sidebar.selectbox(
 # ---------------- LOAD DATA ----------------
 data = yf.download(stock, period="1y")
 data = data.reset_index()
+# 🔥 Normalize 'Close' to a proper 1D Series
+close_col = data["Close"]
 
-# 🔥 FIX: flatten Close column (IMPORTANT)
-if isinstance(data["Close"], pd.DataFrame):
-    data["Close"] = data["Close"].iloc[:, 0]
-    
-data["Close"] = pd.to_numeric(data["Close"], errors="coerce")
+# If it's a DataFrame (multi-column), take the first column
+if isinstance(close_col, pd.DataFrame):
+    close_col = close_col.iloc[:, 0]
+
+# If it's still not a Series, convert it safely
+data["Close"] = pd.Series(close_col).astype(float)
 # 👉 CREATE COPY FOR MODEL (IMPORTANT)
 data_model = data.copy()
 
