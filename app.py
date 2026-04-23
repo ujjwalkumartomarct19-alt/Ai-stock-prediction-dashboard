@@ -99,13 +99,17 @@ selected_model = st.sidebar.selectbox(
 data = yf.download(stock, period="1y")
 data = data.reset_index()
 
-# ---------------- FEATURE ENGINEERING ----------------
-data["MA10"] = data["Close"].rolling(10).mean()
-data["MA50"] = data["Close"].rolling(50).mean()
-data["Return"] = data["Close"].pct_change()
-data["Target"] = data["Close"].shift(-1)
+# 👉 CREATE COPY FOR MODEL (IMPORTANT)
+data_model = data.copy()
 
-data = data.dropna()
+# -------- FEATURE ENGINEERING (MODEL ONLY) --------
+data_model["MA10"] = data_model["Close"].rolling(10).mean()
+data_model["MA50"] = data_model["Close"].rolling(50).mean()
+data_model["Return"] = data_model["Close"].pct_change()
+data_model["Target"] = data_model["Close"].shift(-1)
+
+# Clean only model data
+data_model = data_model.dropna()
 
 features = ["Open", "High", "Low", "Volume", "MA10", "MA50"]
 
@@ -118,8 +122,8 @@ if len(data) < 60:
 
 features = ["Open", "High", "Low", "Volume", "MA10", "MA50"]
 
-X = data[features]
-y = data["Target"]
+X = data_model[features]
+y = data_model["Target"]
 
 # --------- TIME SERIES SPLIT ----------
 split = int(len(X) * 0.8)
@@ -221,42 +225,39 @@ import plotly.graph_objects as go
 
 st.subheader("📈 Interactive Stock Chart")
 
+# 👉 Create MA only for visualization (NOT dropping data)
+data["MA10"] = data["Close"].rolling(10).mean()
+data["MA50"] = data["Close"].rolling(50).mean()
+
 fig2 = go.Figure()
 
-# Close Price (bright cyan)
 fig2.add_trace(go.Scatter(
-    x=data["Date"], 
+    x=data["Date"],
     y=data["Close"],
     mode='lines',
     name='Close Price',
     line=dict(color='cyan', width=2)
 ))
 
-# MA10 (yellow)
 fig2.add_trace(go.Scatter(
-    x=data["Date"], 
+    x=data["Date"],
     y=data["MA10"],
     mode='lines',
     name='MA10',
     line=dict(color='yellow', width=2)
 ))
 
-# MA50 (red)
 fig2.add_trace(go.Scatter(
-    x=data["Date"], 
+    x=data["Date"],
     y=data["MA50"],
     mode='lines',
     name='MA50',
     line=dict(color='red', width=2)
 ))
 
-# 🔥 Important: Dark theme layout
 fig2.update_layout(
     template="plotly_dark",
-    title=f"{stock} Price Trend",
-    plot_bgcolor='black',
-    paper_bgcolor='black',
-    font=dict(color='white')
+    title=f"{stock} Price Trend"
 )
 
 st.plotly_chart(fig2, use_container_width=True)
