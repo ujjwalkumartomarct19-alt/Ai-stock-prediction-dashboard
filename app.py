@@ -8,6 +8,79 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
+import streamlit as st
+# other imports...
+
+# 👇 ADD CSS HERE (ONLY ONCE)
+st.markdown("""
+<style>
+
+/* 🔥 Animated Background */
+.stApp {
+    background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c1c1c);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* ✨ Fade-in Animation */
+.fade-in {
+    animation: fadeIn 1.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* 💎 Card Style */
+.card {
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0,255,255,0.5);
+}
+
+/* ⚡ Glow Text */
+.glow {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00ffcc;
+    text-align: center;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from {text-shadow: 0 0 10px #00ffcc;}
+    to {text-shadow: 0 0 25px #00ffcc;}
+}
+
+/* 🚀 Button Style */
+.stButton>button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #00c6ff;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------- UI ----------------
 st.set_page_config(page_title="AI Stock Dashboard", layout="wide")
