@@ -238,7 +238,15 @@ data["MA10"] = data["Close"].rolling(10).mean()
 data["MA50"] = data["Close"].rolling(50).mean()
 
 # 🔥 Remove only invalid rows (NOT all data)
-chart_data = data.dropna(subset=["Close"])
+chart_data = data.copy()
+
+# Ensure Close exists safely
+if "Close" not in chart_data.columns:
+    st.error("Close column not found in data")
+    st.stop()
+
+# Drop only invalid values safely
+chart_data = chart_data[chart_data["Close"].notna()]
 
 fig2 = go.Figure()
 
