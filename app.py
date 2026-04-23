@@ -36,11 +36,26 @@ data = data.dropna()
 
 features = ["Open", "High", "Low", "Volume", "MA10", "MA50"]
 
+data = data.dropna()
+
+# --------- SAFETY CHECK ----------
+if len(data) < 60:
+    st.error("Not enough data to train model. Try another stock.")
+    st.stop()
+
+features = ["Open", "High", "Low", "Volume", "MA10", "MA50"]
+
 X = data[features]
 y = data["Target"]
 
-# ---------------- TRAIN TEST ----------------
-X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle=False)
+# --------- TIME SERIES SPLIT ----------
+split = int(len(X) * 0.8)
+
+X_train = X[:split]
+X_test = X[split:]
+
+y_train = y[:split]
+y_test = y[split:]
 
 # ---------------- MODELS ----------------
 lr_model = LinearRegression().fit(X_train, y_train)
