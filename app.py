@@ -99,6 +99,11 @@ selected_model = st.sidebar.selectbox(
 data = yf.download(stock, period="1y")
 data = data.reset_index()
 
+# 🔥 FIX: flatten Close column (IMPORTANT)
+if isinstance(data["Close"], pd.DataFrame):
+    data["Close"] = data["Close"].iloc[:, 0]
+    
+data["Close"] = pd.to_numeric(data["Close"], errors="coerce")
 # 👉 CREATE COPY FOR MODEL (IMPORTANT)
 data_model = data.copy()
 
@@ -225,31 +230,34 @@ import plotly.graph_objects as go
 
 st.subheader("📈 Interactive Stock Chart")
 
-# 👉 Create MA only for visualization (NOT dropping data)
+# Create indicators
 data["MA10"] = data["Close"].rolling(10).mean()
 data["MA50"] = data["Close"].rolling(50).mean()
+
+# 🔥 Remove only invalid rows (NOT all data)
+chart_data = data.dropna(subset=["Close"])
 
 fig2 = go.Figure()
 
 fig2.add_trace(go.Scatter(
-    x=data["Date"],
-    y=data["Close"],
+    x=chart_data["Date"],
+    y=chart_data["Close"],
     mode='lines',
     name='Close Price',
     line=dict(color='cyan', width=2)
 ))
 
 fig2.add_trace(go.Scatter(
-    x=data["Date"],
-    y=data["MA10"],
+    x=chart_data["Date"],
+    y=chart_data["MA10"],
     mode='lines',
     name='MA10',
     line=dict(color='yellow', width=2)
 ))
 
 fig2.add_trace(go.Scatter(
-    x=data["Date"],
-    y=data["MA50"],
+    x=chart_data["Date"],
+    y=chart_data["MA50"],
     mode='lines',
     name='MA50',
     line=dict(color='red', width=2)
@@ -257,7 +265,9 @@ fig2.add_trace(go.Scatter(
 
 fig2.update_layout(
     template="plotly_dark",
-    title=f"{stock} Price Trend"
+    title=f"{stock} Price Trend",
+    xaxis_title="Date",
+    yaxis_title="Price"
 )
 
 st.plotly_chart(fig2, use_container_width=True)
