@@ -176,13 +176,32 @@ scores = []
 
 for s in stocks:
     df = yf.download(s, period="3mo")
+
+    if df.empty:
+        continue
+
     df["MA10"] = df["Close"].rolling(10).mean()
     df = df.dropna()
 
-    score = df["Close"].iloc[-1] - df["MA10"].iloc[-1]
+    if len(df) == 0:
+        continue
+
+    close_val = df["Close"].iloc[-1]
+    ma_val = df["MA10"].iloc[-1]
+
+    # Fix Series issue
+    if hasattr(close_val, "values"):
+        close_val = close_val.values[0]
+
+    if hasattr(ma_val, "values"):
+        ma_val = ma_val.values[0]
+
+    score = float(close_val) - float(ma_val)
+
     scores.append((s, score))
 
-top5 = sorted(scores, key=lambda x: x[1], reverse=True)
+# Sort safely
+top5 = sorted(scores, key=lambda x: float(x[1]), reverse=True)
 
 for i, (s, sc) in enumerate(top5[:5], 1):
     st.write(f"{i}. {s} → Score: {round(sc,2)}")
