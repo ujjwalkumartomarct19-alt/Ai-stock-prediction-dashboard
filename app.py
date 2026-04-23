@@ -95,8 +95,8 @@ final_model = models[best_model_name]
 # ---------------- PREDICTION ----------------
 latest = X.iloc[-1].values.reshape(1, -1)
 
-predicted_price = final_model.predict(latest)[0]
-current_price = data["Close"].iloc[-1]
+predicted_price = float(final_model.predict(latest)[0])
+current_price = float(data["Close"].iloc[-1])
 
 # ---------------- CONFIDENCE SCORE ----------------
 confidence = abs(predicted_price - current_price)
